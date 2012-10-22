@@ -1,1 +1,1 @@
-{ "name": "node_resizer", "version": "1.0.0", "dependencies": {"express": "*", "imagemagick": "*"} }
+{ "name": "node_resizer", "version": "1.0.0", "dependencies": {"express": "*", "imagemagick": "*", "temp": "*"} }
