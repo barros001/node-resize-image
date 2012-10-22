@@ -7,7 +7,6 @@ app = express()
 
 app.get '/:version/:crop/:size/:url(*)', (req, res) ->
   # TODO
-  # Figure out how to block the response, we need to download the image and resize, then return that.
   # Figure out the correct URL scheme
   # Figure out how to send the file back. Mime types? Cache headers?
   # Figure out how to log/notify on errors.
