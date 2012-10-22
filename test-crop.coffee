@@ -4,7 +4,7 @@ express = require('express')
 temp = require('temp')
 
 app = express()
-app.get '/:version/:crop/:size/*', (req, res) -> res.send(resize(req))
+app.get '/:version/:crop/:size/:url(*)', (req, res) -> res.download(resize(req))
 app.listen(3000)
 
 # TODO
@@ -16,7 +16,7 @@ app.listen(3000)
 resize = (req) ->
   console.log req.params
   size = req.params.size
-  url  = req.params[0]
+  url  = req.params.url
 
   console.log "fetching #{ url } ..."
 
@@ -24,7 +24,8 @@ resize = (req) ->
     options = [url, "-resize", size, info.path]
     console.log "Writing to #{info.path}"
     im.convert options, (err, stdout, stderr) ->
-      return console.error(err.stack or err)  if err
-      return stdout if stdout
+      console.error(err.stack or err) if err
+      console.log(stdout) if stdout
 
-
+  # I need to block until the above is done? Or a better way to do this?
+  temp.path
