@@ -1,8 +1,0 @@
-Thumbnail resizing service.
-
-Given a url like 
-http://localhost:3000/v1/300x300/https://s3.amazonaws.com/tanga-images/g6umxktg5pb8.jpg,
-return a 300x300 thumbnail of the image. 
-
-Put this behind amazon cloudfront, use cloudfront to cache the thumbnails..
-
