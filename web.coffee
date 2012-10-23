@@ -32,10 +32,14 @@ app.get '/:version/:options/:url(*)', (req, res) ->
     magick_options.push "center"
     magick_options.push "-extent"
     magick_options.push size
+    magick_options.push "-quality"
+    magick_options.push "70"
   else if width or height
     # We are resizing
     magick_options.push "-thumbnail"
     magick_options.push size
+    magick_options.push "-quality"
+    magick_options.push "70"
   else
     # Just fetching the original image and returning it.
 
