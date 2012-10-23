@@ -1,1 +1,1 @@
-web: coffee test-crop.coffee 
+web: ./node_modules/.bin/coffee web.coffee 

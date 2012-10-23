@@ -3,7 +3,7 @@ im = require("imagemagick")
 express = require('express')
 temp = require('temp')
 
-app = express()
+app = express.createServer()
 
 app.get '/:version/:options/:url(*)', (req, res) ->
   # TODO
