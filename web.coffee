@@ -44,15 +44,15 @@ app.get '/:version/:options/:url(*)', (req, res) ->
     # Just fetching the original image and returning it.
 
   # Open a temp file
-  temp.open suffix: url[-5..-1], (err, info) ->
+  temp.open suffix: url[-5..-1], (err, temp_file) ->
     # Add the temp file's path to the options to give to imagemagick
-    magick_options.push info.path
+    magick_options.push temp_file.path
 
     # Generate the thumbnail
     im.convert magick_options, (err, stdout, stderr) ->
       console.error(err.stack or err) if err
       console.log(stdout) if stdout
       # Send the thumbnail to the client with a expires a year from now
-      res.sendfile info.path, maxAge: 60*60*24*365*1000
+      res.sendfile temp_file.path, maxAge: 60*60*24*365*1000
 
 app.listen(process.env.PORT || 3000)
