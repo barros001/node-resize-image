@@ -1,6 +1,6 @@
 Thumbnail resizing service.
 
-You probably want to host it on Heroku.
+You probably want to host it on appfog or heroku.
 
 Given a URL that contains the original/source image (https://s3.amazonaws.com/tanga-images/83y8hk5ntsq6.png), 
 you can resize it on the fly.
