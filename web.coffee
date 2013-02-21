@@ -44,14 +44,14 @@ app.get '/:version/:options/:url(*)', (req, res) ->
     # Just fetching the original image and returning it.
 
   im.identify url, (err, features) ->
-
     # Imagmagick needs to know what type of file to format the file as.
     # If bmp, format as jpg (some browsers don't like bmp's).
-    file_extension = if features.format == "BMP"
+    file_extension = if !features.format or features.format == "BMP"
       ".jpg"
     else
       ".#{features.format}"
 
+    console.log file_extension
     temp.open suffix: file_extension, (err, temp_file) ->
       # Add the temp file's path to the options to give to imagemagick
       magick_options.push temp_file.path
