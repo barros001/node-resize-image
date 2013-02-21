@@ -50,7 +50,7 @@ app.get '/:version/:options/:url(*)', (req, res) ->
     file_extension = if features.format == "BMP"
       ".jpg"
     else
-      "#{features.format}"
+      ".#{features.format}"
 
     temp.open suffix: file_extension, (err, temp_file) ->
       # Add the temp file's path to the options to give to imagemagick
