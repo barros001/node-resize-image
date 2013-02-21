@@ -1,7 +1,7 @@
-fs      = require("fs")
-im      = require("imagemagick")
 express = require('express')
-temp    = require('temp')
+exec    = require('child_process').exec
+
+String::strip = -> if String::trim? then @trim() else @replace /^\s+|\s+$/g, ""
 
 app = express.createServer()
 
@@ -21,40 +21,36 @@ app.get '/:version/:options/:url(*)', (req, res) ->
   size = "#{width}x#{height}"
 
   # magick_options is an array of parameters that we pass to imagemagick's `convert` program.
-  magick_options = [url]
+  command = ["./resize.sh", url]
 
   if crop == 'fill'
     # We are resizing and cropping to fit
     size += "^"
-    magick_options.push "-thumbnail"
-    magick_options.push size
-    magick_options.push "-gravity"
-    magick_options.push "center"
-    magick_options.push "-extent"
-    magick_options.push size
-    magick_options.push "-quality"
-    magick_options.push "70"
+    command.push "-thumbnail"
+    command.push size
+    command.push "-gravity"
+    command.push "center"
+    command.push "-extent"
+    command.push size
+    command.push "-quality"
+    command.push "70"
   else if width or height
     # We are resizing
-    magick_options.push "-thumbnail"
-    magick_options.push size
-    magick_options.push "-quality"
-    magick_options.push "70"
+    command.push "-thumbnail"
+    command.push size
+    command.push "-quality"
+    command.push "70"
   else
     # Just fetching the original image and returning it.
 
-  temp.open suffix: ".jpg", (err, temp_file) ->
-    # Add the temp file's path to the options to give to imagemagick
-    magick_options.push temp_file.path
+  command_string = command.join(' ')
+  exec command_string, (error, stdout, stderr) ->
+    console.log "error: #{ error}" if error
+    console.log "error: #{ stderr}" if stderr
+    return res.sendfile "no worky" if error or stderr
 
-    # Generate the thumbnail
-    im.convert magick_options, (err, stdout, stderr) ->
-      if err or stdout
-        console.error "when processing #{ url }..."
-        console.error(err.stack or err) if err
-      console.log(stdout) if stdout
-
-      # Send the thumbnail to the client with a expires a year from now
-      res.sendfile temp_file.path, maxAge: 60*60*24*365*1000
+    filename = stdout.strip()
+    # Send the thumbnail to the client with a expires a year from now
+    res.sendfile filename, maxAge: 60*60*24*365*1000
 
 app.listen(process.env.PORT || 3000)
