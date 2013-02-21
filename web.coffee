@@ -16,7 +16,8 @@ app.get '/:version/:options/:url(*)', (req, res) ->
 
   width  = options.match(/w_(\d+)/)?[1] || ''
   height = options.match(/h_(\d+)/)?[1] || ''
-  crop   = options.match(/c_(\w+)/)?[1] || '' # c_fill is the only special option now.
+  crop   = options.match(/c_(\w+)/)?[1] || ''
+  format = options.match(/f_(\w+)/)?[1] || ''
 
   size = "#{width}x#{height}"
 
@@ -43,14 +44,22 @@ app.get '/:version/:options/:url(*)', (req, res) ->
   else
     # Just fetching the original image and returning it.
 
+  # What the file extension of the temporary file should be.
+  # imagemagick uses this to determine what format the image should be.
+  # We either use the format specified in the options, or the last few
+  # characters of the URL. Possibly need a better way to do this.
+  suffix = "." + (format || url[-5..-1])
+
   # Open a temp file
-  temp.open suffix: url[-5..-1], (err, temp_file) ->
+  temp.open suffix: suffix, (err, temp_file) ->
     # Add the temp file's path to the options to give to imagemagick
     magick_options.push temp_file.path
 
     # Generate the thumbnail
     im.convert magick_options, (err, stdout, stderr) ->
-      console.error(err.stack or err) if err
+      if err or stdout
+        console.error "when processing #{ url }..."
+        console.error(err.stack or err) if err
       console.log(stdout) if stdout
       # Send the thumbnail to the client with a expires a year from now
       res.sendfile temp_file.path, maxAge: 60*60*24*365*1000
