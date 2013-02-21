@@ -44,6 +44,9 @@ app.get '/:version/:options/:url(*)', (req, res) ->
     # Just fetching the original image and returning it.
 
   im.identify url, (err, features) ->
+    if err
+      console.error "when processing #{ url }..."
+      console.error(err.stack or err)
     # Imagmagick needs to know what type of file to format the file as.
     # If bmp, format as jpg (some browsers don't like bmp's).
     file_extension = if !features.format or features.format == "BMP"
