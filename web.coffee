@@ -43,30 +43,18 @@ app.get '/:version/:options/:url(*)', (req, res) ->
   else
     # Just fetching the original image and returning it.
 
-  im.identify url, (err, features) ->
-    if err
-      console.error "when processing #{ url }..."
-      console.error(err.stack or err)
-    # Imagmagick needs to know what type of file to format the file as.
-    # If bmp, format as jpg (some browsers don't like bmp's).
-    file_extension = if !features.format or features.format == "BMP"
-      ".jpg"
-    else
-      ".#{features.format}"
+  temp.open suffix: ".jpg", (err, temp_file) ->
+    # Add the temp file's path to the options to give to imagemagick
+    magick_options.push temp_file.path
 
-    console.log file_extension
-    temp.open suffix: file_extension, (err, temp_file) ->
-      # Add the temp file's path to the options to give to imagemagick
-      magick_options.push temp_file.path
+    # Generate the thumbnail
+    im.convert magick_options, (err, stdout, stderr) ->
+      if err or stdout
+        console.error "when processing #{ url }..."
+        console.error(err.stack or err) if err
+      console.log(stdout) if stdout
 
-      # Generate the thumbnail
-      im.convert magick_options, (err, stdout, stderr) ->
-        if err or stdout
-          console.error "when processing #{ url }..."
-          console.error(err.stack or err) if err
-        console.log(stdout) if stdout
-
-        # Send the thumbnail to the client with a expires a year from now
-        res.sendfile temp_file.path, maxAge: 60*60*24*365*1000
+      # Send the thumbnail to the client with a expires a year from now
+      res.sendfile temp_file.path, maxAge: 60*60*24*365*1000
 
 app.listen(process.env.PORT || 3000)
