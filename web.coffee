@@ -48,7 +48,7 @@ app.get '/:version/:options/:url(*)', (req, res) ->
   # imagemagick uses this to determine what format the image should be.
   # We either use the format specified in the options, or the last few
   # characters of the URL. Possibly need a better way to do this.
-  suffix = "." + (format || url[-5..-1])
+  suffix = "." + (format || url[-6..-1]) # Needs to be 6 (for .jpeg)
 
   # Open a temp file
   temp.open suffix: suffix, (err, temp_file) ->
