@@ -50,7 +50,7 @@ app.get '/:version/:options/:url(*)', (req, res) ->
     file_extension = if features.format == "BMP"
       ".jpg"
     else
-      "#{.features.format}"
+      "#{features.format}"
 
     temp.open suffix: file_extension, (err, temp_file) ->
       # Add the temp file's path to the options to give to imagemagick
@@ -64,6 +64,6 @@ app.get '/:version/:options/:url(*)', (req, res) ->
         console.log(stdout) if stdout
 
         # Send the thumbnail to the client with a expires a year from now
-        res.sendfile temp_file.path, maxAge: 60*60*24*365*1000, "Content-disposition": "inline"
+        res.sendfile temp_file.path, maxAge: 60*60*24*365*1000
 
 app.listen(process.env.PORT || 3000)
