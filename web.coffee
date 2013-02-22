@@ -46,7 +46,7 @@ app.get '/:version/:options/:url(*)', (req, res) ->
   command_string = command.join(' ')
   exec command_string, (error, stdout, stderr) ->
     console.log "error: #{ error}" if error
-    console.log "error: #{ stderr}" if stderr
+    console.log "stderr: #{ stderr}" if stderr
     return res.sendfile "no worky" if error or stderr
 
     filename = stdout.strip()

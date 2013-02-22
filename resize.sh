@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Steps:
 # Download the image.
@@ -16,9 +16,11 @@ curl $1 -s > $DOWNLOADED_IMAGE
 # on a new line and use head to get the first one.
 IMAGE_TYPE=`identify -format '%m\n' $DOWNLOADED_IMAGE | head -n 1`
 
-# If bmp, change to jpg.
-if [[ "$IMAGE_TYPE" -eq 'BMP' ]]
-then IMAGE_TYPE='JPG'
+
+# If bmp or pdf, change to jpg.
+if [ "$IMAGE_TYPE" = 'BMP' -o "$IMAGE_TYPE" = 'PDF' ]
+then 
+  IMAGE_TYPE='JPG'
 fi
 
 NEW_FILENAME=$DOWNLOADED_IMAGE.$IMAGE_TYPE
