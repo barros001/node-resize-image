@@ -43,13 +43,19 @@ app.get '/:version/:options/:url(*)', (req, res) ->
 
   command_string = command.join(' ')
   exec command_string, (error, stdout, stderr) ->
-    console.log "error: #{ error}" if error
-    console.log "stderr: #{ stderr}" if stderr
-    return res.sendfile "no worky" if error or stderr
-
-    filename = stdout.strip()
-    # Send the thumbnail to the client with a expires a year from now
-    res.sendfile filename, maxAge: 60*60*24*365*1000, ->
-      exec "rm #{ filename }"
+    if error
+      str = "problem for "
+      str += req.originalUrl
+      str += " from "
+      str += req.get('referer')
+      console.log str
+      console.log "error: #{ error}"
+      console.log "stderr: #{ stderr}" if stderr
+      res.sendfile "no worky"
+    else
+      filename = stdout.strip()
+      # Send the thumbnail to the client with a expires a year from now
+      res.sendfile filename, maxAge: 60*60*24*365*1000, ->
+        exec "rm #{ filename }"
 
 app.listen(process.env.PORT || 3000)

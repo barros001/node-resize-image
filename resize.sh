@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Steps:
 # Download the image.
@@ -9,13 +10,12 @@
 
 DOWNLOADED_IMAGE=`mktemp $TMPDIR/download-XXXXXXXXX`
 
-curl $1 -s > $DOWNLOADED_IMAGE
+wget --no-check-certificate -nv $1 -O $DOWNLOADED_IMAGE
 
 # Get the image type. If it's animated, then it'll show up
 # as GIFGIFGIF (one for each frame), so put each type 
 # on a new line and use head to get the first one.
 IMAGE_TYPE=`identify -format '%m\n' $DOWNLOADED_IMAGE | head -n 1`
-
 
 # If bmp or pdf, change to jpg.
 if [ "$IMAGE_TYPE" = 'BMP' -o "$IMAGE_TYPE" = 'PDF' ]
