@@ -31,13 +31,13 @@ app.get '/:version/:options/:url(*)', (req, res) ->
     command.push "-extent"
     command.push size
     command.push "-quality"
-    command.push "90"
+    command.push "70"
   else if width or height
     # We are resizing
     command.push "-thumbnail"
     command.push size
     command.push "-quality"
-    command.push "90"
+    command.push "70"
   else
     # Just fetching the original image and returning it.
 
