@@ -8,7 +8,7 @@ set -e
 # Convert the image.
 # Output image name to stdout.
 
-DOWNLOADED_IMAGE=`mktemp $TMPDIR/download-XXXXXXXXX`
+DOWNLOADED_IMAGE=`mktemp /tmp/download-XXXXXXXXX`
 
 wget --no-check-certificate -nv $1 -O $DOWNLOADED_IMAGE
 
@@ -27,6 +27,10 @@ NEW_FILENAME=$DOWNLOADED_IMAGE.$IMAGE_TYPE
 
 shift 
 
-convert $DOWNLOADED_IMAGE $@ $NEW_FILENAME
+# The [0] prevents animated gif's from being resized. That's
+# expensive to do.
+convert $DOWNLOADED_IMAGE[0] $@ $NEW_FILENAME
+
+rm $DOWNLOADED_IMAGE
 
 echo $NEW_FILENAME

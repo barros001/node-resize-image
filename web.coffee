@@ -1,4 +1,5 @@
 express = require('express')
+path    = require('path')
 exec    = require('child_process').exec
 
 String::strip = -> if String::trim? then @trim() else @replace /^\s+|\s+$/g, ""
@@ -51,11 +52,16 @@ app.get '/:version/:options/:url(*)', (req, res) ->
       console.log str
       console.log "error: #{ error}"
       console.log "stderr: #{ stderr}" if stderr
-      res.sendfile "no worky"
+      res.status(404).send('Not found')
     else
       filename = stdout.strip()
       # Send the thumbnail to the client with a expires a year from now
-      res.sendfile filename, maxAge: 60*60*24*365*1000, ->
+      # Need workaround to work with node 0.10
+      # http://stackoverflow.com/questions/15557480/node-js-typeerror-with-path-join-when-serving-webpage-with-express
+      relative = path.basename(filename)
+      root     = path.dirname(filename)
+      age = 60*60*24*365*1000
+      res.sendfile relative, root: root, maxAge: age, ->
         exec "rm #{ filename }"
 
 app.listen(process.env.PORT || 3000)
