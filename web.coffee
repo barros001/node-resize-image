@@ -13,9 +13,15 @@ app.get '/:version/:options/:url(*)', (req, res) ->
   url     = req.params.url
   options = req.params.options
 
-  width  = options.match(/w_(\d+)/)?[1] || ''
-  height = options.match(/h_(\d+)/)?[1] || ''
-  crop   = options.match(/c_(\w+)/)?[1] || ''
+  width   = options.match(/w_(\d+)/)?[1] || ''
+  height  = options.match(/h_(\d+)/)?[1] || ''
+  crop    = options.match(/c_(\w+)/)?[1] || ''
+  gravity = options.match(/g_(\w+)/)?[1] || 'center'
+
+  # sanitize gravity parameter
+  if gravity not in ['none', 'center', 'east', 'forget', 'northeast', 'north', 'northwest', 'southeast', 'south',
+                     'southwest', 'west']
+    gravity = 'center'
 
   size = "#{width}x#{height}"
 
@@ -28,7 +34,7 @@ app.get '/:version/:options/:url(*)', (req, res) ->
     command.push "-thumbnail"
     command.push size
     command.push "-gravity"
-    command.push "center"
+    command.push gravity
     command.push "-extent"
     command.push size
     command.push "-quality"
